@@ -19,6 +19,13 @@ class Calculator:
         self.mechaba_and_dpe_fleur_used = 0
         self.mechaba_and_dpe_maximus_used = 0
         self.mechaba_and_dpe_schism = 0
+        self.drolls_used_for_aleister = 0
+        self.drolls_used_for_aleister_no_destiny = 0
+        self.ashes_used_for_aleister = 0
+        self.ashes_used_for_aleister_no_destiny = 0
+        self.ashes_used_for_ecclesia = 0
+        self.aleister_used_for_ecclesia = 0
+        self.dead_small_world = 0
         self.loopAmount = int(sys.argv[2])
 
         with open(sys.argv[1]) as f:
@@ -41,25 +48,39 @@ class Calculator:
         if "Dogmatika Ecclesia, the Virtuous" in hand:
             hand.remove("Dogmatika Ecclesia, the Virtuous")
             self.mechaba_and_dpe += 1
+            if "Small World" in hand:
+                self.dead_small_world += 1
             self.checkForSchism(hand)
         elif ("Small World" in hand and "Ash Blossom & Joyous Spring" in hand):
             hand.remove("Small World")
             hand.remove("Ash Blossom & Joyous Spring")
             self.mechaba_and_dpe += 1
+            self.ashes_used_for_ecclesia += 1
             self.checkForSchism(hand)
         elif "Fusion Destiny" in hand:
             hand.remove("Fusion Destiny")
             self.mechaba_and_dpe += 1
+            if "Small World" in hand:
+                self.dead_small_world += 1
             self.checkForSchism(hand)
         elif "Dogmatika Fleurdelis, the Knighted" in hand:
             hand.remove("Dogmatika Fleurdelis, the Knighted")
             self.mechaba_and_dpe += 1
             self.mechaba_and_dpe_fleur_used += 1
+            if "Small World" in hand:
+                self.dead_small_world += 1
             self.checkForSchism(hand)
-        elif "Dogmatika Maximus" in hand:
+        elif "Dogmatika Maximus" in hand and "Small World" in hand:
+            hand.remove("Small World")
             hand.remove("Dogmatika Maximus")
             self.mechaba_and_dpe += 1
             self.mechaba_and_dpe_maximus_used += 1
+            self.checkForSchism(hand)
+        elif "Aleister the Invoker" in hand and "Small World" in hand:
+            hand.remove("Small World")
+            hand.remove("Aleister the Invoker")
+            self.mechaba_and_dpe += 1
+            self.aleister_used_for_ecclesia += 1
             self.checkForSchism(hand)
 
     # Function to check if Nadir Servant exists in hand after combo for Schism
@@ -89,9 +110,15 @@ class Calculator:
                 hand.remove("Small World")
                 if ("Droll & Lock Bird" in hand):
                     hand.remove("Droll & Lock Bird")
+                    self.drolls_used_for_aleister += 1
+                    if not ("Fusion Destiny" in hand):
+                        self.drolls_used_for_aleister_no_destiny += 1
                     self.checkNonAleisterPieces(hand)
                 elif ("Ash Blossom & Joyous Spring" in hand):
                     hand.remove("Ash Blossom & Joyous Spring")
+                    self.ashes_used_for_aleister += 1
+                    if not ("Fusion Destiny" in hand):
+                        self.ashes_used_for_aleister_no_destiny += 1
                     self.checkNonAleisterPieces(hand)
         print("Total percent Boards finishing on Mechaba + DPE:")
         print((self.mechaba_and_dpe / self.loopAmount) * 100)
@@ -101,6 +128,20 @@ class Calculator:
         print((self.mechaba_and_dpe_maximus_used / self.loopAmount) * 100)
         print("Percent of boards finishing on Mechaba + DPE with Schism set:")
         print((self.mechaba_and_dpe_schism / self.loopAmount) * 100)
+        print("Percent of hands Droll was used with Small World for Aleister:")
+        print((self.drolls_used_for_aleister / self.loopAmount) * 100)
+        print("Percent of hands Droll was used with Small World for Aleister and no Fusion Desinty in hand:")
+        print((self.drolls_used_for_aleister_no_destiny / self.loopAmount) * 100)
+        print("Percent of hands Ash was used with Small World for Aleister:")
+        print((self.ashes_used_for_aleister / self.loopAmount) * 100)
+        print("Percent of hands Ash was used with Small World for Aleister with no Fusion Destiny in hand:")
+        print((self.ashes_used_for_aleister_no_destiny / self.loopAmount) * 100)
+        print("Percent of hands Ash was used with Small World for Ecclesia")
+        print((self.ashes_used_for_ecclesia / self.loopAmount) * 100)
+        print("Percent of hands second Aleister was used with Small World for Ecclesia:")
+        print((self.aleister_used_for_ecclesia / self.loopAmount) * 100)
+        print("Percent of hands Small World was a dead card")
+        print((self.dead_small_world / self.loopAmount) * 100)
 
 test = Calculator()
 test.run()
